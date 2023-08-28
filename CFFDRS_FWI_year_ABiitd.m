@@ -2,26 +2,39 @@
 % Anasuya Barik, IIT Delhi
 % contact the author at anasuya993@gmail.com
 
-% Ths code computes the cffdrs-fwi for 1 year at a daily temporal
-% resolution. The inputs to the CFFDRS FWI are 2m temperature (K or Degree Celcius), relative
-% humidity (%), past 24hr accumulated precipitation (mm) and wind speed (m/s) recorded at 12noon of
-% the local time. In absence of such precise observations, daily gridded
-% dataset of mean/maximum temperature, mean relative humidity, wind speed and daily
+% Ths code computes the CFFDRS-FWI for 1 year at a daily temporal
+% resolution.  
+% This index involves three moisture codes, the Fine Fuel Moisture Code (FFMC), the Duff Moisture Code (DMC), and the Drought Code (DC). 
+% These codes quantify moisture content at depths of 0-1 inch, 2-4 inches, and 4-8 inches, respectively, considering both rainfall and drying phases. 
+% The algorithm then proceeds to derive two intermediary indices, the Initial Spread Index (ISI) and the Buildup Index (BUI). 
+% The ISI integrates wind speed and the top layer moisture from FFMC to determine the fire's rate of spread. Meanwhile, BUI, computed from DMC and DC, reflects available fuel for combustion. 
+% Ultimately, the FWI is obtained from the combination of ISI and BUI.  
+
+
+% The inputs to the CFFDRS FWI are 2m temperature (K or Degree Celcius), relative
+% humidity (%), past 24hr accumulated precipitation (mm), and wind speed (m/s) recorded at 12noon of
+% the local time. In the absence of such sub-daily data, daily gridded
+% data of mean/maximum temperature, minimum relative humidity, mean wind speed, and daily
 % accumulated total rainfall can also be used.
 
 % Few IMPORTANT notes for using the code
-% ix is the no of grids in x direction 
-% iy is the no of grids in y direction 
+% ix is the no of grids in the x direction 
+% iy is the no of grids in the y direction 
 % The input variables should ideally be in the dimension ix x iy x 365
-% (considering a 365-day calender)for gridded FWI computation. For point
+% (considering a 365-day calendar)for gridded FWI computation. For point
 % locations the input files must be 1D array of size 1 x 365.
 
-% NOTE:This code computes the indices over Indian Mainland. For
-% applicability over regions with similar climate in the tropical belt refer to the README doc.
+% NOTE 
+% The code is primarily developed for India. However, it is suitable for usage in any tropical region of interest. 
+% This code has been developed using CFFDRS-FWI equations as described in Wagner, 1987. Refer to README.doc for a detailed description of the adjustments done.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %% Read latitude longitude information
 % For point location read the respective location values
 lon=ncread('filename.nc','longitude'); % 1D matrix
 lat=ncread('filename.nc','latitude');   % 1D matrix
+
 %% Input data read 
 temp=ncread('filename.nc','temp_variable');
 temp_K=temp_111-273.15;
@@ -256,8 +269,10 @@ fwi(:,:,ii)=fwi;
 disp(ii)
 end
 
-%SAVE THE VARIABLES ffmc, dmc, dc, fwi from the workspace into .mat format
-%or find the code to create nc files in https://github.com/anasuya993/postprocessing_DSCESM/blob/main/DSCESM_postprocessing_ncwrite.m
+% SAVE THE VARIABLES ffmc, dmc, dc, fwi from the workspace into .mat format
+% or find the code to create nc files in https://github.com/anasuya993/postprocessing_DSCESM/blob/main/DSCESM_postprocessing_ncwrite.m
+
+
 %% Plot and Check the output
 pcolor(lon,lat,(squeeze(nanmean(fwi,3)))'); shading interp; 
 hold on;
