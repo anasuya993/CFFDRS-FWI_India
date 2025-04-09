@@ -23,3 +23,14 @@ Modified to reflect Indian tropical conditions:
 For latitudes <20°N: consistent heating assumed throughout the year.
 
 For higher latitudes: monthly PET variation considered.
+
+Applications
+Forest fire danger estimation under current and future climate scenarios.
+
+Integration with climate model outputs (e.g., CESM, CMIP6).
+
+Regional forest fire monitoring
+
+Disclaimer
+This implementation maintains the original scientific formulation of the CFFDRS-FWI system. No changes were made to danger threshold values or empirical coefficients. Calibration steps were only applied to enhance the spatial relevance and computational feasibility for Indian conditions.
+
